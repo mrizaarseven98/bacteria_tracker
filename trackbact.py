@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 from tqdm import tqdm
 import trackpy as tp
 import seaborn
+import os
 
 
 def load_tif(filename, show=True):
@@ -175,7 +176,31 @@ def filter_trajectories(trajectory, filter_size=100):
 
     return trajectory_filtered
 
+def write_trajectory(trajectory, filename):
 
+    dir_name = "trajectory_data"
+    full_dir_path = os.path.join(dir_name, filename)
+    
+    if not os.path.exists(full_dir_path):
+        os.makedirs(full_dir_path)
+
+    pickle_file_path = os.path.join(full_dir_path, "trajectory.csv")
+    trajectory.to_csv(pickle_file_path, index=False)
+
+def read_trajectory(filename):
+
+    dir_name = "trajectory_data"
+    full_dir_path = os.path.join(dir_name, filename)
+
+    if os.path.exists(full_dir_path):
+
+        csv_file_path = os.path.join(full_dir_path, "trajectory.csv")
+        trajectory=pd.read_csv(csv_file_path)
+
+        return trajectory
+    
+    else:
+        raise OSError
 
 #We take this function from a python package called pytaxis: https://github.com/tatyana-perlova/pytaxis
 def plot_traj_all(traj,
