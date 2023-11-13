@@ -38,7 +38,7 @@ def contour_fitting(tif_file, show_nth_frame=None):
         cnt_image=blank_image
 
         contours_list=[]
-        for nframe in tqdm(range(0, tif_file.shape[0]), desc="Finding the contour of the bacteria..."):
+        for nframe in tqdm(range(0, tif_file.shape[0]), desc="Finding the contours of the bacteria..."):
             frame=tif_file[nframe]
             frame=frame.astype(np.uint8)
             
@@ -144,7 +144,7 @@ def ellipse_to_particle(tif_file, file_name, ellipses_df):
         for index, row in group.iterrows():
             x = int(row['x'])
             y = int(row['y'])
-            cv2.circle(blank_image, (x,y), radius=3, color=(255, 255, 255), thickness=-1)
+            cv2.circle(blank_image, (x,y), radius=1, color=(255, 255, 255), thickness=-1)
 
         image_to_save.append(Image.fromarray(blank_image))
 
@@ -156,7 +156,7 @@ def track_bacteria(ellipses_df, max_search_range=20, min_search_range=10, filter
                   search_range = max_search_range, 
                   adaptive_stop = min_search_range,
                   adaptive_step=0.98, 
-                  memory = 1)
+                  memory = 0)
     traj_tp = traj_tp.sort_values(by=['particle', 'frame'])
 
     traj_tp.reset_index(drop=True, inplace=True)
@@ -233,8 +233,9 @@ def calculate_kinematic_parameters(trajectory_data, time_window=1):
         traj_group['angular_acc'] = traj_group['angular_vel'].diff() / time_step
 
         return traj_group
-
-    traj_params = trajectory_data.groupby('particle', group_keys=True).apply(group_parameters)
+    
+    tqdm.pandas()
+    traj_params = trajectory_data.groupby('particle', group_keys=True).progress_apply(group_parameters)
     traj_params.reset_index(drop=True, inplace=True)
 
     return traj_params
