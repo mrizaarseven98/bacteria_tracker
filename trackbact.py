@@ -229,8 +229,9 @@ def plot_traj_all(traj,
     unstacked = traj.set_index(['frame', 'particle']).unstack()
     plot = plt.plot(unstacked.x, unstacked.y, linewidth=2, alpha = 1)
     plt.gca().set_aspect(1)
-    plt.plot([1600, 1600 + scalebar/pix_size], [1800 , 1800], color = 'black', linewidth = 4)
-    plt.text(1550, 1850, r'{}$\mu m$'.format(scalebar), fontsize = 18)
+    plt.gca().invert_yaxis()
+    plt.plot([1550, 1550 + scalebar/pix_size], [350 , 350], color = 'black', linewidth = 4)
+    plt.text(1550, 300, r'{}$\mu m$'.format(scalebar), fontsize = 18)
 
 def calculate_kinematic_parameters(trajectory_data, time_step=1):
     
