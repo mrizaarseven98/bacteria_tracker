@@ -232,9 +232,9 @@ def plot_traj_all(traj,
     plt.plot([1600, 1600 + scalebar/pix_size], [1800 , 1800], color = 'black', linewidth = 4)
     plt.text(1550, 1850, r'{}$\mu m$'.format(scalebar), fontsize = 18)
 
-def calculate_kinematic_parameters(trajectory_data, time_window=1):
+def calculate_kinematic_parameters(trajectory_data, time_step=1):
     
-    def group_parameters(traj_group,time_step=time_window):
+    def group_parameters(traj_group):
         
         # If time_step is set to 1, it will calculate the displacement parameters of particles in 2 consecutive frames
 
