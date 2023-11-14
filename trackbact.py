@@ -118,7 +118,7 @@ def fit_ellipses(tif_file, contours=None, filter_max=None, show_nth_frame=None, 
     
 def format_ellipses(ellipses_df):
     all_ellipses = [(frame_idx, ellipse) for frame_idx, frame in enumerate(ellipses_df) for ellipse in frame]
-
+    
     #We then put it in a pandas dataframe
     ellipses_df = pd.DataFrame({
         'x': [ellipse[0][0] for _, ellipse in all_ellipses],
@@ -186,6 +186,18 @@ def write_trajectory(trajectory, filename):
 
     pickle_file_path = os.path.join(full_dir_path, "trajectory.csv")
     trajectory.to_csv(pickle_file_path, index=False)
+    
+def write_kinematics(kinematics_data, filename):
+    
+    dir_name = "trajectory_data"
+    full_dir_path = os.path.join(dir_name, filename)
+
+    if not os.path.exists(full_dir_path):
+        os.makedirs(full_dir_path)
+
+    kinematics_file_path = os.path.join(full_dir_path, "kinematics.csv")
+    kinematics_data.to_csv(kinematics_file_path, index=False)
+    
 
 def read_trajectory(filename):
 
@@ -233,12 +245,16 @@ def plot_traj_all(traj,
     plt.plot([1550, 1550 + scalebar/pix_size], [350 , 350], color = 'black', linewidth = 4)
     plt.text(1550, 300, r'{}$\mu m$'.format(scalebar), fontsize = 18)
 
-def calculate_kinematic_parameters(trajectory_data, time_step=1):
+def calculate_kinematic_parameters(trajectory_data, time_step=1, pixel_size=0.1625):
     
     def group_parameters(traj_group):
         
         # If time_step is set to 1, it will calculate the displacement parameters of particles in 2 consecutive frames
-
+        traj_group['x']=traj_group['x']*pixel_size
+        traj_group['y']=traj_group['y']*pixel_size
+        traj_group['major_axis_size']=traj_group['major_axis_size']*pixel_size
+        traj_group['minor_axis_size']=traj_group['minor_axis_size']*pixel_size
+        
         # Calculate velocities
         traj_group['vx'] = traj_group['x'].diff() / time_step
         traj_group['vy'] = traj_group['y'].diff() / time_step
@@ -250,10 +266,10 @@ def calculate_kinematic_parameters(trajectory_data, time_step=1):
         traj_group['acc']=np.sqrt(traj_group['ax']**2 + traj_group['ay']**2)
 
         # Calculate angular position
-        traj_group['angle'] = np.arctan2(traj_group['vy'], traj_group['vx'])
+        traj_group['diff_body_angle'] = traj_group['body_angle'].diff()
 
         # Calculate angular velocity
-        traj_group['angular_vel'] = traj_group['angle'].diff() / time_step
+        traj_group['angular_vel'] = traj_group['diff_body_angle'].diff() / time_step
 
         # Calculate angular acceleration
         traj_group['angular_acc'] = traj_group['angular_vel'].diff() / time_step
