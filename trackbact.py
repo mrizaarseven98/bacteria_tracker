@@ -97,15 +97,15 @@ def fit_ellipses(tif_file, contours=None, filter_max=None, show_nth_frame=None, 
                         raise Exception("Filtering...")
                     else:
                         ellipses.append(ellipse)
+                        
+                        if nframe==show_nth_frame and len(ellipses)!=0:
+                            cv2.ellipse(ellipse_image,ellipse, (0,0,255), 1)
 
                 except Exception as e:
                     if(debug):
                         print(e)
                         mistreated_ellipses+=1
             
-                if nframe==show_nth_frame and len(ellipses)!=0:
-                    cv2.ellipse(ellipse_image,ellipse, (0,0,255), 1)
-
             if debug:
                 print("Number of undetected ellipses: "+ str(mistreated_ellipses)+ " , in frame: "+str(nframe))
 
