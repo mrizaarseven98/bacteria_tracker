@@ -184,7 +184,7 @@ def write_trajectory(trajectory, filename):
     if not os.path.exists(full_dir_path):
         os.makedirs(full_dir_path)
 
-    pickle_file_path = os.path.join(full_dir_path, "trajectory.csv")
+    pickle_file_path = os.path.join(full_dir_path, filename+"_trajectory.csv")
     trajectory.to_csv(pickle_file_path, index=False)
     
 def write_kinematics(kinematics_data, filename):
@@ -195,7 +195,7 @@ def write_kinematics(kinematics_data, filename):
     if not os.path.exists(full_dir_path):
         os.makedirs(full_dir_path)
 
-    kinematics_file_path = os.path.join(full_dir_path, "kinematics.csv")
+    kinematics_file_path = os.path.join(full_dir_path, filename+"_kinematics.csv")
     kinematics_data.to_csv(kinematics_file_path, index=False)
     
 
@@ -206,7 +206,22 @@ def read_trajectory(filename):
 
     if os.path.exists(full_dir_path):
 
-        csv_file_path = os.path.join(full_dir_path, "trajectory.csv")
+        csv_file_path = os.path.join(full_dir_path, filename+"_trajectory.csv")
+        trajectory=pd.read_csv(csv_file_path)
+
+        return trajectory
+    
+    else:
+        raise OSError
+
+def read_kinematics(filename):
+
+    dir_name = "trajectory_data"
+    full_dir_path = os.path.join(dir_name, filename)
+
+    if os.path.exists(full_dir_path):
+
+        csv_file_path = os.path.join(full_dir_path, filename+"_kinematics.csv")
         trajectory=pd.read_csv(csv_file_path)
 
         return trajectory
@@ -279,5 +294,11 @@ def calculate_kinematic_parameters(trajectory_data, time_step=1, pixel_size=0.16
     tqdm.pandas()
     traj_params = trajectory_data.groupby('particle', group_keys=True).progress_apply(group_parameters)
     traj_params.reset_index(drop=True, inplace=True)
+    traj_params.rename(columns={"x": "x [um]","y": "y [um]","major_axis_size": "major_axis_size [um]",
+                                    "minor_axis_size": "minor_axis_size [um]", "body_angle": "body_angle [degrees]",
+                                      "vx":"vx [um/s]", "vy":"vy [um/s]", "vel":"vel [um/s]", "ax":"ax [um/s^2]",
+                                        "ay":"ay [um/s^2]", "acc":"acc [um/s^2]", "diff_body_angle":"diff_body_angle [degrees]",
+                                          "angular_vel": "angular_vel [degrees/s]",
+                                            "angular_acc": "angular_acc [degrees/s^2]"}, inplace=True)
 
     return traj_params
