@@ -75,7 +75,7 @@ def plot_mean_velocities(particle_parameters):
 
 
 def plot_traj_lentgth(particle_parameters):
-    #To get mean legths of the trajectories
+    #To get total legths of the trajectories
     df=particle_parameters
     df = df.sort_values(by=['particle', 'frame'])
 
@@ -89,7 +89,7 @@ def plot_traj_lentgth(particle_parameters):
     std_trajectory_length = total_distance_per_particle.std()
 
     print(f"Total distance for each particle:\n {total_distance_per_particle}")
-    print(f"Mean Trajectory Length: {mean_trajectory_length}")
+    print(f"Mean trajectory length: {mean_trajectory_length}")
     print(f"Standard deviation of trajectory length: {std_trajectory_length}")
 
     plt.figure(figsize=(10, 6))
@@ -101,3 +101,28 @@ def plot_traj_lentgth(particle_parameters):
     plt.legend()
     plt.grid(True)
     plt.show()
+    
+def plot_traj_end_to_end_lentgth(particle_parameters):
+    #To get end-to-end distances of the trajectories
+    df=particle_parameters
+    grouped = df.groupby('particle')
+
+    # Calculate the end-to-end distance for each particle
+    total_end_to_end_distance_per_particle = grouped.apply(lambda x: np.sqrt((x['x [um]'].iloc[-1] - x['x [um]'].iloc[0])**2 + 
+                                                (x['y [um]'].iloc[-1] - x['y [um]'].iloc[0])**2))
+
+    # Calculate mean and standard deviation
+    mean_distance = total_end_to_end_distance_per_particle.mean()
+    std_distance = total_end_to_end_distance_per_particle.std()
+    print(f"End-to-end distance for each particle:\n {total_end_to_end_distance_per_particle}")
+    print(f"Mean trajectory length: {mean_distance}")
+    print(f"Standard deviation of trajectory length: {std_distance}")
+    
+    # Plotting
+    plt.figure(figsize=(10, 6))
+    plt.hist(total_end_to_end_distance_per_particle, bins=30, edgecolor='black', alpha=0.7)
+    plt.axvline(mean_distance, color='red', linestyle='dashed', linewidth=2)
+    plt.title('Histogram of end-to-end trajectory lengths')
+    plt.xlabel('Trajectory length (um)')
+    plt.ylabel('Number of bacteria [-]')
+    plt.show()        
