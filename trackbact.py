@@ -6,7 +6,6 @@ from skimage.io import imread,imshow
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 import trackpy as tp
-import seaborn
 import os
 
 
@@ -170,7 +169,8 @@ def track_bacteria(ellipses_df, max_search_range=20, min_search_range=10, filter
 def filter_trajectories(trajectory, filter_size=100):
     
     particle_counts = trajectory['particle'].value_counts()
-    particles_to_keep = particle_counts[particle_counts > filter_size].reset_index().rename(columns={'index': 'particle', 'particle': 'count'})
+    particles_to_keep = particle_counts[particle_counts > filter_size].reset_index()
+    particles_to_keep.columns = ['particle', 'count']
     display(particles_to_keep)
     trajectory_filtered = pd.merge(trajectory, particles_to_keep[['particle']], on='particle')
 
@@ -228,37 +228,6 @@ def read_kinematics(filename):
     
     else:
         raise OSError
-
-#We take this function from a python package called pytaxis: https://github.com/tatyana-perlova/pytaxis
-def plot_traj_all(traj,
-                imdim1,
-                imdim2,
-                pix_size, 
-                palette = None, 
-                scalebar = 100):
-
-    if palette == None:
-        palette = seaborn.color_palette("Dark2", len(traj.particle.unique()))
-    plt.tick_params(\
-        axis='both',          # changes apply to the x-axis
-        which='both',      # both major and minor ticks are affected
-        bottom='off',
-        left = 'off',
-        right = 'off',# ticks along the bottom edge are off
-        top='off',         # ticks along the top edge are off
-        labelbottom='off') # labels along the bottom edge are off
-    plt.yticks([])
-    plt.xticks([])
-    plt.xlim(0, imdim1)
-    plt.ylim(0, imdim2)
-    
-    
-    unstacked = traj.set_index(['frame', 'particle']).unstack()
-    plot = plt.plot(unstacked.x, unstacked.y, linewidth=2, alpha = 1)
-    plt.gca().set_aspect(1)
-    plt.gca().invert_yaxis()
-    plt.plot([1550, 1550 + scalebar/pix_size], [350 , 350], color = 'black', linewidth = 4)
-    plt.text(1550, 300, r'{}$\mu m$'.format(scalebar), fontsize = 18)
 
 def calculate_kinematic_parameters(trajectory_data, time_step=1, pixel_size=0.1625):
     

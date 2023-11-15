@@ -1,6 +1,38 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import seaborn
+
+#We take this function from a python package called pytaxis: https://github.com/tatyana-perlova/pytaxis
+def plot_traj_all(traj,
+                imdim1,
+                imdim2,
+                pix_size, 
+                palette = None, 
+                scalebar = 100):
+
+    if palette == None:
+        palette = seaborn.color_palette("Dark2", len(traj.particle.unique()))
+    plt.tick_params(\
+        axis='both',          # changes apply to the x-axis
+        which='both',      # both major and minor ticks are affected
+        bottom='off',
+        left = 'off',
+        right = 'off',# ticks along the bottom edge are off
+        top='off',         # ticks along the top edge are off
+        labelbottom='off') # labels along the bottom edge are off
+    plt.yticks([])
+    plt.xticks([])
+    plt.xlim(0, imdim1)
+    plt.ylim(0, imdim2)
+    
+    
+    unstacked = traj.set_index(['frame', 'particle']).unstack()
+    plot = plt.plot(unstacked.x, unstacked.y, linewidth=2, alpha = 1)
+    plt.gca().set_aspect(1)
+    plt.gca().invert_yaxis()
+    plt.plot([1550, 1550 + scalebar/pix_size], [350 , 350], color = 'black', linewidth = 4)
+    plt.text(1550, 300, r'{}$\mu m$'.format(scalebar), fontsize = 18)
 
 
 def plot_reversals(particle_parameters):
@@ -74,7 +106,7 @@ def plot_mean_velocities(particle_parameters):
     plt.show()
 
 
-def plot_traj_lentgth(particle_parameters):
+def plot_traj_length(particle_parameters):
     #To get total legths of the trajectories
     df=particle_parameters
     df = df.sort_values(by=['particle', 'frame'])
