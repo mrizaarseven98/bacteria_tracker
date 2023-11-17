@@ -157,4 +157,6 @@ def plot_traj_end_to_end_lentgth(particle_parameters):
     plt.title('Histogram of end-to-end trajectory lengths')
     plt.xlabel('End-to-end trajectory length [um]')
     plt.ylabel('Number of bacteria [-]')
+    plt.legend()
+    plt.grid(True)
     plt.show()        
