@@ -126,7 +126,7 @@ def plot_traj_length(particle_parameters):
 
     plt.figure(figsize=(10, 6))
     plt.hist(total_distance_per_particle, bins=20, alpha=0.7, edgecolor='black')
-    plt.axvline(mean_trajectory_length, color='red', linestyle='dashed', linewidth=2, label='Mean Trajectory Length')
+    plt.axvline(mean_trajectory_length, color='red', linestyle='dashed', linewidth=2, label='Mean trajectory length')
     plt.title('Histogram of trajectory lengths')
     plt.xlabel('Trajectory length [um]')
     plt.ylabel('Number of bacteria [-]')
@@ -146,15 +146,15 @@ def plot_traj_end_to_end_lentgth(particle_parameters):
     # Calculate mean and standard deviation
     mean_distance = total_end_to_end_distance_per_particle.mean()
     std_distance = total_end_to_end_distance_per_particle.std()
-    print(f"End-to-end distance for each particle:\n {total_end_to_end_distance_per_particle}")
-    print(f"Mean trajectory length: {mean_distance}")
-    print(f"Standard deviation of trajectory length: {std_distance}")
+    print(f"End-to-end trajectory length for each particle:\n {total_end_to_end_distance_per_particle}")
+    print(f"Mean end-to-end trajectory length: {mean_distance}")
+    print(f"Standard deviation of end-to-end trajectory length: {std_distance}")
     
     # Plotting
     plt.figure(figsize=(10, 6))
-    plt.hist(total_end_to_end_distance_per_particle, bins=30, edgecolor='black', alpha=0.7)
-    plt.axvline(mean_distance, color='red', linestyle='dashed', linewidth=2)
+    plt.hist(total_end_to_end_distance_per_particle, bins=20, edgecolor='black', alpha=0.7)
+    plt.axvline(mean_distance, color='red', linestyle='dashed', linewidth=2, label='Mean end-to-end trajectory length')
     plt.title('Histogram of end-to-end trajectory lengths')
-    plt.xlabel('Trajectory length (um)')
+    plt.xlabel('End-to-end trajectory length [um]')
     plt.ylabel('Number of bacteria [-]')
     plt.show()        
